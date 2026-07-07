@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — NIMS University CMS</title>
+  <meta name="description" content="Login to NIMS University College Management System — Rajasthan, Jaipur">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" type="image/png" href="https://ozdyn7q2xl.in1.agent.nopaperforms.com/media/uploads/agent_icon/0cf600ab47dd44459bbf5638251ee018.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    :root {
+      --color-bg: #FAFBFC;
+      --color-surface: #F3F4F6;
+      --color-card: rgba(255, 255, 255, 0.98);
+      --color-card-hover: rgba(255, 255, 255, 1);
+      --color-primary: #D90429;
+      --color-primary-red: #EF233C;
+      --color-gold: #D90429;
+      --color-gold-dark: #B80322;
+      --color-gold-glow: rgba(217, 4, 41, 0.08);
+      --color-white: #111827;
+      --color-white-soft: #374151;
+      --color-slate-400: #6B7280;
+      --color-border: #E5E7EB;
+      --color-border-bright: rgba(217, 4, 41, 0.20);
+      --color-danger: #EF4444;
+      --color-success: #10B981;
+      --font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--color-bg);
+      color: var(--color-white);
+      font-family: var(--font-family);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Decorative background SVG pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 20%, rgba(217, 4, 41, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(217, 4, 41, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(217, 4, 41, 0.06) 0%, transparent 60%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237B1113' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Warm ambient glows */
+    .glow-top {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(217, 4, 41, 0.12) 0%, transparent 70%);
+      top: -10%;
+      right: 10%;
+      z-index: 0;
+      pointer-events: none;
+      animation: floatGlow 8s ease-in-out infinite;
+    }
+
+    .glow-bottom {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(217, 4, 41, 0.15) 0%, transparent 70%);
+      bottom: -15%;
+      left: 5%;
+      z-index: 0;
+      pointer-events: none;
+      animation: floatGlow 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatGlow {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20px, -15px) scale(1.05); }
+    }
+
+    /* Decorative corner ornaments */
+    .ornament {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.08;
+    }
+
+    .ornament-tl {
+      top: 20px;
+      left: 20px;
+    }
+
+    .ornament-br {
+      bottom: 20px;
+      right: 20px;
+      transform: rotate(180deg);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      z-index: 1;
+      perspective: 1000px;
+    }
+
+    /* Shield Logo Area */
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 32px;
+      text-decoration: none;
+      animation: fadeInDown 0.6s ease-out;
+    }
+
+    .brand-shield {
+      filter: drop-shadow(0 4px 24px rgba(217, 4, 41, 0.25));
+      margin-bottom: 8px;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--color-gold), #EF233C, var(--color-gold-dark));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--color-slate-400);
+      text-align: center;
+    }
+
+    .brand-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+      margin: 8px 0 4px;
+      border-radius: 2px;
+    }
+
+    .auth-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 0 60px rgba(217, 4, 41, 0.08),
+        inset 0 1px 0 rgba(217, 4, 41, 0.06);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle top gold accent line */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+      border-radius: 0 0 4px 4px;
+    }
+
+    .auth-card:hover {
+      border-color: var(--color-border-bright);
+      box-shadow:
+        0 24px 48px rgba(0, 0, 0, 0.45),
+        0 0 40px rgba(217, 4, 41, 0.06),
+        inset 0 1px 0 rgba(217, 4, 41, 0.1);
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--color-white);
+    }
+
+    .card-subtitle {
+      font-size: 14px;
+      color: var(--color-slate-400);
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-slate-400);
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--color-slate-400);
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+
+    .form-control {
+      width: 100%;
+      height: 46px;
+      background-color: rgba(0, 0, 0, 0.04);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 0 16px 0 44px;
+      color: var(--color-white);
+      font-family: var(--font-family);
+      font-size: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-control::placeholder {
+      color: rgba(0, 0, 0, 0.3);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--color-gold);
+      box-shadow: 0 0 12px var(--color-gold-glow), 0 0 4px rgba(217, 4, 41, 0.1);
+    }
+
+    .form-control:focus + i {
+      color: var(--color-gold);
+    }
+
+    .form-group:focus-within .form-label {
+      color: var(--color-gold);
+    }
+
+    select.form-control {
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    select.form-control option {
+      background-color: #EDEEF2;
+      color: var(--color-white);
+    }
+
+    .select-arrow {
+      position: absolute;
+      right: 14px;
+      color: var(--color-slate-400);
+      pointer-events: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      height: 46px;
+      background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-dark) 100%);
+      border: none;
+      border-radius: var(--radius-md);
+      color: #F5F6FA;
+      font-family: var(--font-family);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: filter 0.2s, transform 0.2s, box-shadow 0.2s;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(217, 4, 41, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .btn-submit:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(217, 4, 41, 0.45);
+    }
+
+    .btn-submit:hover::before {
+      opacity: 1;
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-toggle {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 14px;
+      color: var(--color-slate-400);
+    }
+
+    .auth-toggle-link {
+      color: var(--color-gold);
+      text-decoration: none;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.2s, color 0.2s;
+    }
+
+    .auth-toggle-link:hover {
+      text-decoration: underline;
+      color: #EF233C;
+    }
+
+    /* Error and Success banners */
+    .alert {
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: shake 0.4s ease;
+    }
+
+    .alert-danger {
+      background-color: rgba(242, 95, 92, 0.1);
+      border: 1px solid rgba(242, 95, 92, 0.2);
+      color: var(--color-danger);
+    }
+
+    .alert-success {
+      background-color: rgba(34, 211, 163, 0.1);
+      border: 1px solid rgba(34, 211, 163, 0.2);
+      color: var(--color-success);
+      animation: none;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Hidden class */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Footer text */
+    .footer-text {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.25);
+      letter-spacing: 0.5px;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 28px 24px;
+      }
+      .brand-name {
+        font-size: 17px;
+        letter-spacing: 1.5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient glow orbs -->
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <!-- Corner ornaments -->
+  <svg class="ornament ornament-tl" width="80" height="80" viewBox="0 0 80 80" fill="none">
+    <path d="M2 2 L2 40 Q2 2 40 2 Z" stroke="#D90429" stroke-width="1.5" fill="none"/>
+    <path d="M8 8 L8 30 Q8 8 30 8 Z" stroke="#D90429" stroke-width="0.5" fill="none"/>
+    <circle cx="2" cy="2" r="2" fill="#D90429"/>
+  </svg>
+  <svg class="ornament ornament-br" width="80" height="80" viewBox="0 0 80 80" fill="none">
+    <path d="M2 2 L2 40 Q2 2 40 2 Z" stroke="#D90429" stroke-width="1.5" fill="none"/>
+    <path d="M8 8 L8 30 Q8 8 30 8 Z" stroke="#D90429" stroke-width="0.5" fill="none"/>
+    <circle cx="2" cy="2" r="2" fill="#D90429"/>
+  </svg>
+
+  <div class="container">
+    <!-- Brand -->
+    <a href="#" class="brand">
+      <!-- Inline SVG Shield Logo -->
+      <img src="https://ozdyn7q2xl.in1.agent.nopaperforms.com/media/uploads/agent_icon/0cf600ab47dd44459bbf5638251ee018.jpg" alt="NIMS University Logo" height="150" width="140" style="margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+      <div class="brand-name">NIMS University</div>
+      <div class="brand-divider"></div>
+      <div class="brand-sub">Rajasthan, Jaipur</div>
+    </a>
+
+    <!-- Auth Card -->
+    <div class="auth-card">
+      <div id="alert-container"></div>
+
+      <!-- Login View -->
+      <div id="login-view">
+        <h1 class="card-title">Welcome back</h1>
+        <p class="card-subtitle">Log in to your dashboard to manage details</p>
+
+        <form id="login-form">
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <div class="input-wrapper">
+              <input type="email" id="login-email" class="form-control" placeholder="name@domain.com" required autocomplete="username">
+              <i class="far fa-envelope"></i>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+              <label class="form-label" for="login-password" style="margin-bottom: 0;">Password</label>
+              <a href="forgot-password.html" class="forgot-pwd-link" style="font-size: 12px; font-weight: 500; color: var(--color-cyan-400); text-decoration: none; transition: color 0.2s;">Forgot Password?</a>
+            </div>
+            <div class="input-wrapper">
+              <input type="password" id="login-password" class="form-control" placeholder="••••••••" required autocomplete="current-password">
+              <i class="far fa-lock"></i>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="btn-login">
+            <span>Log In</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="auth-toggle">
+          Don't have an account? <span class="auth-toggle-link" id="go-to-register">Register here</span>
+        </div>
+      </div>
+
+      <!-- Register View -->
+      <div id="register-view" class="hidden">
+        <h1 class="card-title">Create account</h1>
+        <p class="card-subtitle">Register a new account on the CMS portal</p>
+
+        <form id="register-form">
+          <div class="form-group">
+            <label class="form-label" for="register-name">Full Name</label>
+            <div class="input-wrapper">
+              <input type="text" id="register-name" class="form-control" placeholder="John Doe" required>
+              <i class="far fa-user"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="register-email">Email Address</label>
+            <div class="input-wrapper">
+              <input type="email" id="register-email" class="form-control" placeholder="name@domain.com" required>
+              <i class="far fa-envelope"></i>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="register-password">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="register-password" class="form-control" placeholder="••••••••" required>
+              <i class="far fa-lock"></i>
+            </div>
+          </div>
+
+
+          <button type="submit" class="btn-submit" id="btn-register">
+            <span>Create Account</span>
+            <i class="fas fa-user-plus"></i>
+          </button>
+        </form>
+
+        <div class="auth-toggle">
+          Already have an account? <span class="auth-toggle-link" id="go-to-login">Log in here</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- App Download Banner -->
+    <div style="margin-top: 30px; margin-bottom: 10px; width: 100%; max-width: 400px; padding: 20px; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border: 1px solid rgba(217, 4, 41, 0.2); border-radius: var(--radius-lg); text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
+      <div style="display: flex; justify-content: center; gap: 16px; margin-bottom: 12px;">
+        <i class="fab fa-android" style="color: #3DDC84; font-size: 28px;"></i>
+        <i class="fab fa-apple" style="color: #000000; font-size: 28px;"></i>
+      </div>
+      <h3 style="font-size: 15px; color: var(--color-white); margin-bottom: 6px; font-weight: 700;">NIMS CMS Mobile App</h3>
+      <p style="font-size: 13px; color: var(--color-slate-400); margin-bottom: 16px; line-height: 1.4;">Access attendance, timetable, and courses directly from your phone!</p>
+      <a href="#" style="display: inline-block; background: var(--color-primary); color: white; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(217, 4, 41, 0.2);"><i class="fas fa-download" style="margin-right: 6px;"></i> Download App</a>
+    </div>
+
+    <div class="footer-text">
+      College Management System &bull; NIMS University
+    </div>
+  </div>
+
+  <!-- Load auth.js wrapper -->
+  <script src="auth.js"></script>
+  <script>
+    'use strict';
+
+    // Elements
+    const loginView = document.getElementById('login-view');
+    const registerView = document.getElementById('register-view');
+    const goToRegister = document.getElementById('go-to-register');
+    const goToLogin = document.getElementById('go-to-login');
+    const alertContainer = document.getElementById('alert-container');
+
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+
+    // Boot Check: if already logged in, redirect to dashboard
+    if (window.Auth && window.Auth.isLoggedIn()) {
+      window.location.href = '/index.html';
+    }
+
+    // Navigation switches
+    goToRegister.addEventListener('click', () => {
+      showAlert('', ''); // clear alerts
+      loginView.classList.add('hidden');
+      registerView.classList.remove('hidden');
+    });
+
+    goToLogin.addEventListener('click', () => {
+      showAlert('', ''); // clear alerts
+      registerView.classList.add('hidden');
+      loginView.classList.remove('hidden');
+    });
+
+    // Alert helper
+    function showAlert(msg, type = 'danger') {
+      if (!msg) {
+        alertContainer.innerHTML = '';
+        return;
+      }
+      const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}">
+          <i class="fas ${icon}"></i>
+          <span>${msg}</span>
+        </div>
+      `;
+    }
+
+    // Login Form Submit handler
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showAlert('', '');
+
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+
+      const submitBtn = document.getElementById('btn-login');
+      submitBtn.disabled = true;
+      submitBtn.querySelector('span').textContent = 'Logging in...';
+
+      try {
+        const res = await window.Auth.login(email, password);
+        if (!res.success) {
+          showAlert(res.message || 'Login failed');
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'Log In';
+        }
+      } catch (err) {
+        showAlert('Network error — please verify the backend is running');
+        submitBtn.disabled = false;
+        submitBtn.querySelector('span').textContent = 'Log In';
+      }
+    });
+
+    // Register Form Submit handler
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      showAlert('', '');
+
+      const name = document.getElementById('register-name').value.trim();
+      const email = document.getElementById('register-email').value.trim();
+      const password = document.getElementById('register-password').value;
+
+      const submitBtn = document.getElementById('btn-register');
+      submitBtn.disabled = true;
+      submitBtn.querySelector('span').textContent = 'Creating account...';
+
+      try {
+        const res = await fetch('http://localhost:5001/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+
+        const body = await res.json();
+        
+        if (!res.ok || !body.success) {
+          showAlert(body.message || 'Registration failed');
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'Create Account';
+          return;
+        }
+
+        showAlert('Account created successfully! Redirecting to login...', 'success');
+        
+        // Auto-switch to login page after 2 seconds
+        setTimeout(() => {
+          registerForm.reset();
+          goToLogin.click();
+          document.getElementById('login-email').value = email;
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'Create Account';
+        }, 1500);
+
+      } catch (err) {
+        showAlert('Network error — please verify the backend is running');
+        submitBtn.disabled = false;
+        submitBtn.querySelector('span').textContent = 'Create Account';
+      }
+    });
+  </script>
+</body>
+</html>

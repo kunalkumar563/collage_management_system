@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>404 - Page Not Found | NIMS University</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .error-box {
+      background: #ffffff;
+      padding: 42px 28px;
+      border-radius: 14px;
+      text-align: center;
+      max-width: 540px;
+      width: 90%;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .logo {
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      max-width: 180px;
+      height: auto;
+    }
+
+    .error-code {
+      font-size: 96px;
+      font-weight: 800;
+      color: #cf2027;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .error-title {
+      font-size: 26px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .error-message {
+      font-size: 16px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .actions a {
+      display: inline-block;
+      margin: 6px;
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-home {
+      background: #cf2027;
+      color: #fff;
+    }
+
+    .btn-home:hover {
+      background: #a8181d;
+    }
+
+    .btn-contact {
+      border: 2px solid #cf2027;
+      color: #cf2027;
+      background: transparent;
+    }
+
+    .btn-contact:hover {
+      background: #cf2027;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="error-box">
+
+    <div class="logo">
+      <a href="https://www.nimsuniversity.org/">
+        <img src="/images/nims-logo.png" alt="NIMS University Logo">
+      </a>
+    </div>
+
+    <div class="error-code">404</div>
+    <div class="error-title">Page Not Found</div>
+    <div class="error-message">
+      Sorry, the page you’re looking for doesn’t exist or has been moved.<br>
+      Please check the URL or use the options below.
+    </div>
+
+    <div class="actions">
+      <a href="https://www.nimsuniversity.org/" class="btn-home">Go to Homepage</a>
+      <a href="https://www.nimsuniversity.org/contact.php" class="btn-contact">Contact Us</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
