@@ -147,6 +147,7 @@ const forgotPassword = async (req, res) => {
         connectionTimeout: 10000,
         greetingTimeout: 10000,
         socketTimeout: 10000,
+        family: 4 // Force IPv4 to prevent IPv6 drops on cloud servers
       });
     } else {
       // Mock ethereal transport for development if no real credentials
