@@ -170,6 +170,11 @@ const forgotPassword = async (req, res) => {
       });
     }
 
+    // Since Render free tier often blocks SMTP, log the OTP first so the admin can retrieve it from Render Logs
+    console.log("=========================================");
+    console.log(`Generated OTP for ${user.email}: ${otp}`);
+    console.log("=========================================");
+
     const mailOptions = {
       from: '"NIMS University" <noreply@nimsuniversity.org>',
       to: user.email,
