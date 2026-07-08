@@ -26,7 +26,7 @@
 
 const AUTH_TOKEN_KEY = 'cms_auth_token';
 const AUTH_USER_KEY  = 'cms_auth_user';
-const API_BASE       = 'http://localhost:5001/api';
+const API_BASE       = '/api'; // Using relative path so it automatically works on local and Render
 
 // ─── Storage helpers ──────────────────────────────────────────────────────────
 

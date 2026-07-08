@@ -938,6 +938,24 @@
       filter: invert(1) brightness(0.8);
       cursor: pointer;
     }
+
+    /* Mobile overrides for inline styles */
+    @media (max-width: 1024px) {
+      #sidebar { transform: translateX(-100%); }
+      #sidebar.sidebar--mobile-open { transform: translateX(0); }
+      #main-wrapper { margin-left: 0 !important; }
+      #btn-sidebar-toggle { display: flex !important; }
+    }
+    @media (max-width: 768px) {
+      #top-header { padding: 0 12px; gap: 8px; }
+      #header-search { width: auto; flex: 1; min-width: 0; }
+      #header-search:focus-within { width: auto; }
+      #header-search-input::placeholder { content: "Search..."; color: transparent; } /* Shorten placeholder visually if needed or just let it truncate */
+      .search-kbd, #btn-help, #btn-fullscreen, .header-divider { display: none !important; }
+      #header-actions { gap: 4px; }
+      .header-action-btn { width: 32px; height: 32px; }
+      .breadcrumb__page { font-size: 14px; display: none; } /* Hide page title to give search bar room */
+    }
   </style>
 </head>
 

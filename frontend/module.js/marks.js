@@ -393,7 +393,7 @@ function mrkInjectSection() {
 
     <!-- KPI Row -->
     <div id="mrk-kpi-row" role="list" aria-label="Marks statistics"
-         style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+         style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
 
       <div class="stat-card" id="mrk-kpi-exams" role="listitem" tabindex="0">
         <div class="stat-card__header">
@@ -1269,7 +1269,7 @@ function mrkRenderAnalytics() {
 
   container.innerHTML = `
     <!-- Stats strip -->
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:14px;margin-bottom:24px;">
       ${[
         { label:'Class Average', val: `${stats.avg} / ${exam.totalMarks}`, sub: `${avgGrade.pct}% · Grade ${avgGrade.grade}`, color: avgGrade.color },
         { label:'Highest Score', val: stats.highest, sub: `${mrkComputeGrade(stats.highest, exam.totalMarks).pct}%`, color: '#22D3A3' },

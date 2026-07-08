@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- * ASHFORD UNIVERSITY — CMS ADMIN DASHBOARD
+ * NIMS UNIVERSITY — CMS ADMIN DASHBOARD
  * app.js  |  Core Application Logic
  * =============================================================================
  *

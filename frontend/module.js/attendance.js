@@ -1834,7 +1834,7 @@ function attOpenStudentPanel(studentId) {
       </div>
 
       <!-- Summary stats -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:20px;">
         ${['P','L','A','EX'].map(st => {
           const cnt = allMarks.filter(m => m.status === st).length;
           return `
@@ -1925,7 +1925,7 @@ function attViewSessionDetail(id) {
           </div>
         `).join('')}
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:10px;margin-bottom:20px;">
         ${[['P','Present',rec.present],['L','Late',rec.late],['A','Absent',rec.absent],['EX','Excused',rec.excused||0]].map(([k,l,v]) => `
           <div style="text-align:center;padding:10px;background:${ATT.STATUS_COLOR[k]}10;
                       border:1px solid ${ATT.STATUS_COLOR[k]}28;border-radius:var(--radius-sm);">

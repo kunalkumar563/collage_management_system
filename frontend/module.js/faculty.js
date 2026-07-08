@@ -289,7 +289,7 @@ function facInjectSection() {
 
     <!-- KPI Row -->
     <div id="fac-kpi-row" role="list" aria-label="Faculty statistics"
-         style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+         style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;margin-bottom:24px;">
 
       <div class="stat-card" id="fac-kpi-total" role="listitem" tabindex="0"
            style="cursor:pointer;" title="All faculty">
