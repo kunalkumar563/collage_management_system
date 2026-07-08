@@ -136,18 +136,25 @@ const forgotPassword = async (req, res) => {
     // Nodemailer setup
     let transporter;
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+      // Manual DNS resolution to force IPv4 (bypassing NodeMailer's broken family: 4 handling on some platforms)
+      const dns = require('dns').promises;
+      const lookupRes = await dns.lookup('smtp.gmail.com', { family: 4 });
+      const smtpIp = lookupRes.address;
+      
       transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: smtpIp,
         port: 465,
         secure: true,
         auth: {
           user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASS,
         },
+        tls: {
+          servername: 'smtp.gmail.com', // Required for TLS validation when connecting via IP
+        },
         connectionTimeout: 10000,
         greetingTimeout: 10000,
         socketTimeout: 10000,
-        family: 4 // Force IPv4 to prevent IPv6 drops on cloud servers
       });
     } else {
       // Mock ethereal transport for development if no real credentials
