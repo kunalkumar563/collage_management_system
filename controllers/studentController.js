@@ -122,22 +122,24 @@ exports.createStudent = async (req, res) => {
 // Get All Students — supports optional ?search= query param for server-side filtering
 exports.getAllStudents = async (req, res) => {
   try {
-    const { search } = req.query;
+    const { search, department, semester, section } = req.query;
     let query = {};
+
+    if (department) query.department = department;
+    if (semester) query.semester = semester;
+    if (section) query.section = new RegExp(`^${section}$`, 'i'); // Case insensitive strict match for section
 
     if (search && search.trim()) {
       const rx = new RegExp(search.trim(), 'i');
-      query = {
-        $or: [
-          { name:        rx },
-          { rollNo:      rx },
-          { admissionNo: rx },
-          { email:       rx },
-          { department:  rx },
-          { semester:    rx },
-          { section:     rx },
-        ],
-      };
+      query.$or = [
+        { name:        rx },
+        { rollNo:      rx },
+        { admissionNo: rx },
+        { email:       rx },
+        { department:  rx },
+        { semester:    rx },
+        { section:     rx },
+      ];
     }
 
     const students = await Student.find(query).sort({ createdAt: -1 });

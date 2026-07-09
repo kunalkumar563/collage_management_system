@@ -3427,7 +3427,10 @@ const InlineMarksModule = (() => {
       const cRes = await Auth.fetch(`/courses/${selectedCourseId}`);
       if (!cRes.data) return Toast.show('Course not found', 'error');
       
-      const sRes = await Auth.fetch(`/students?department=${cRes.data.department}`);
+      let studentQuery = `/students?department=${encodeURIComponent(cRes.data.department)}`;
+      if (cRes.data.semester) studentQuery += `&semester=${encodeURIComponent(cRes.data.semester)}`;
+      if (cRes.data.section) studentQuery += `&section=${encodeURIComponent(cRes.data.section)}`;
+      const sRes = await Auth.fetch(studentQuery);
       currentStudents = sRes.data || [];
 
       const mRes = await Auth.fetch('/marks');
