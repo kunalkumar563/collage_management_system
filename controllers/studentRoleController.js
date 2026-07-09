@@ -42,7 +42,7 @@ const getProfile = async (req, res) => {
 // POST /api/student/complete-profile
 const completeProfile = async (req, res) => {
   try {
-    const { department, semester, section, rollNo } = req.body;
+    const { department, semester, section, rollNo, phone, dob, gender } = req.body;
     
     // Check if Roll No already exists in the same department
     const existingStudent = await Student.findOne({ department, rollNo });
@@ -54,14 +54,24 @@ const completeProfile = async (req, res) => {
     let student = await getStudentProfile(req.user.email);
 
     if (student) {
-      if (student.rollNo !== 'N/A' && student.department !== 'N/A') {
+      if (
+        student.status === 'Enrolled' || 
+        student.status === 'Active' || 
+        (student.rollNo && student.rollNo !== 'N/A' && student.department && student.department !== 'Unassigned' && student.department !== 'N/A')
+      ) {
         return res.status(400).json({ success: false, message: 'You are already registered. Details cannot be changed.' });
       }
-      student.department = department;
-      student.semester = semester;
-      student.section = section;
-      student.rollNo = rollNo;
-      await student.save();
+      
+      await Student.findByIdAndUpdate(student._id, {
+        department,
+        semester,
+        section,
+        rollNo,
+        phone,
+        dob,
+        gender,
+        status: 'Enrolled'
+      });
     } else {
       student = await Student.create({
         name: user.name,
@@ -71,7 +81,10 @@ const completeProfile = async (req, res) => {
         semester,
         section,
         rollNo,
-        status: 'Active'
+        phone,
+        dob,
+        gender,
+        status: 'Enrolled'
       });
     }
 
