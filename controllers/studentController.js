@@ -1,4 +1,5 @@
 const Student = require("../models/student");
+const User = require("../models/user");
 const { sendWelcomeEmail } = require("../utils/emailService");
 
 const DEPT_CODES = {
@@ -202,21 +203,40 @@ exports.updateStudent = async (req, res) => {
       payload.email = normalizeText(payload.email).toLowerCase();
     }
 
+    let existingStudent = await Student.findById(req.params.id);
+    
+    // Fallback: If student record doesn't exist but they are trying to update their own profile, create it
+    if (!existingStudent && req.user.role === 'student') {
+      const user = await User.findById(req.user.id || req.user._id);
+      if (user) {
+        existingStudent = await Student.create({
+          name: user.name,
+          email: user.email,
+          department: 'Unassigned',
+        });
+      }
+    }
+
+    if (!existingStudent) {
+      return res.status(404).json({ success: false, message: "Student not found" });
+    }
+
+    // Enforce profile-level authorization
+    if (req.user.role === 'student' && req.user.email !== existingStudent.email) {
+      return res.status(403).json({
+        success: false,
+        message: 'Students can only update their own profile',
+      });
+    }
+
     const student = await Student.findByIdAndUpdate(
-      req.params.id,
+      existingStudent._id,
       payload,
       {
         new: true,
         runValidators: true,
       }
     );
-
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student not found",
-      });
-    }
 
     res.status(200).json({
       success: true,

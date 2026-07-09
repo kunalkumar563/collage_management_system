@@ -40,10 +40,10 @@ router.get("/:id",
 );
 
 // ── PUT /api/students/:id ─────────────────────────────────────────────────────
-// Only admin can update student records
+// Admin can update any student. Student can update their own record.
 router.put("/:id",
   verifyToken,
-  authorizeRoles("admin"),
+  authorizeRoles("admin", "student"),
   updateStudent
 );
 

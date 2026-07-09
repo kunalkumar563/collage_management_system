@@ -540,7 +540,7 @@ function mrkInjectSection() {
              transition:border-color .2s,box-shadow .2s;">
           <i class="fas fa-search" aria-hidden="true" style="color:var(--color-slate-400);font-size:11px;"></i>
           <input type="search" id="mrk-gb-search"
-                 placeholder="Search student name or roll no…"
+                 placeholder="Search student name or student id…"
                  aria-label="Search in gradebook"
                  style="background:none;border:none;outline:none;
                         font-family:var(--font-ui);font-size:12.5px;
@@ -579,7 +579,7 @@ function mrkInjectSection() {
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Student</th>
-                <th scope="col">Roll No</th>
+                <th scope="col">Student ID</th>
                 <th scope="col">Department</th>
                 <th scope="col" style="text-align:center;">
                   Marks <span id="mrk-th-max" style="color:var(--color-slate-400);font-weight:400;">(/ —)</span>
@@ -1489,7 +1489,7 @@ function mrkRenderRanks() {
             <tr>
               <th scope="col" style="width:48px;">Rank</th>
               <th scope="col">Student</th>
-              <th scope="col">Roll No</th>
+              <th scope="col">Student ID</th>
               <th scope="col" style="text-align:center;">Score</th>
               <th scope="col" style="text-align:center;">%</th>
               <th scope="col" style="text-align:center;">Grade</th>
@@ -2228,7 +2228,7 @@ function mrkExportGradebookCSV() {
     .map((m, i) => ({ ...m, rank: i + 1 }));
 
   const headers = [
-    'Rank', 'Student Name', 'Roll No', 'Department', 'Semester',
+    'Rank', 'Student Name', 'Student ID', 'Department', 'Semester',
     'Marks Obtained', `Total Marks (${exam.totalMarks})`,
     'Percentage', 'Grade', 'Grade Point',
     `Result (Pass ≥ ${exam.passingMarks})`, 'Remarks',

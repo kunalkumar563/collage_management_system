@@ -354,11 +354,16 @@ const getDashboardOverview = async (req, res) => {
       success: true,
       data: {
         student: {
+          _id: student._id,
           name: student.name,
           rollNo: student.rollNo,
           department: student.department,
+          batch: student.batch,
+          course: student.course,
           semester: student.semester,
           section: student.section,
+          address: student.address,
+          status: student.status,
           avatar: student.profilePic || `https://ui-avatars.com/api/?name=${encodeURIComponent(student.name)}&background=E53935&color=fff`
         },
         stats: {

@@ -115,8 +115,15 @@ const markAttendance = async (req, res) => {
     });
 
     if (existing) {
-      // Update existing record
-      existing.records = records;
+      // Update existing record by merging new records
+      const existingMap = new Map();
+      existing.records.forEach(r => existingMap.set(r.studentId.toString(), r));
+      
+      records.forEach(r => {
+        existingMap.set(r.studentId.toString(), r);
+      });
+      
+      existing.records = Array.from(existingMap.values());
       await existing.save();
       return res.status(200).json({ success: true, message: "Attendance updated successfully", data: existing });
     }

@@ -319,7 +319,7 @@ const SECTION_HTML = `
           <tr>
             <th style="width:40px;"><input type="checkbox" id="att-check-all" style="accent-color:var(--color-cyan-400); cursor:pointer;"></th>
             <th>#</th>
-            <th>Roll No.</th>
+            <th>Student ID</th>
             <th>Student Name</th>
             <th>Status</th>
             <th>Remarks</th>
@@ -579,6 +579,7 @@ async function attPopulateSessionSelect() {
       opt.setAttribute('data-dept', c.department);
       opt.setAttribute('data-semester', c.semester);
       opt.setAttribute('data-name', c.name);
+      opt.setAttribute('data-section', c.section || '');
       opt.textContent = `${c.courseCode} · ${c.name} (${c.department} - Sem ${c.semester})`;
       select.appendChild(opt);
     });
@@ -594,6 +595,19 @@ async function attPopulateSessionSelect() {
       const cName = ATT.currentCourseName;
       if (dept) {
         attLoadRoster(dept, sem, sectionSelect.value, cName);
+      }
+    });
+  }
+
+  const dateSelect = _$('#att-date-select');
+  if (dateSelect) {
+    dateSelect.addEventListener('change', () => {
+      const dept = ATT.currentDept;
+      const sem = ATT.currentSemester;
+      const cName = ATT.currentCourseName;
+      const section = sectionSelect ? sectionSelect.value : '';
+      if (dept) {
+        attLoadRoster(dept, sem, section, cName);
       }
     });
   }
@@ -614,6 +628,25 @@ async function attPopulateSessionSelect() {
       const dept = opt.getAttribute('data-dept');
       const sem = opt.getAttribute('data-semester');
       const cName = opt.getAttribute('data-name');
+      const sectionAssigned = opt.getAttribute('data-section');
+      
+      let sectionToLoad = '';
+      if (sectionSelect) {
+        if (sectionAssigned && sectionAssigned.toLowerCase() !== 'all sections') {
+          // Extract letter A, B, C, D
+          let match = sectionAssigned.match(/([A-D])/i);
+          if (match) {
+            sectionSelect.value = match[1].toUpperCase();
+          }
+          sectionSelect.disabled = true;
+          sectionSelect.style.opacity = '0.6';
+        } else {
+          sectionSelect.disabled = false;
+          sectionSelect.style.opacity = '1';
+        }
+        sectionToLoad = sectionSelect.value;
+      }
+      
       const subtitle = _$('#att-mark-subtitle');
       if (subtitle) {
         subtitle.textContent = opt.textContent;
@@ -622,9 +655,13 @@ async function attPopulateSessionSelect() {
       ATT.currentDept = dept;
       ATT.currentSemester = sem;
       ATT.currentCourseName = cName;
-      const section = sectionSelect ? sectionSelect.value : '';
-      attLoadRoster(dept, sem, section, cName);
+      
+      attLoadRoster(dept, sem, sectionToLoad, cName);
     } else {
+      if (sectionSelect) {
+        sectionSelect.disabled = false;
+        sectionSelect.style.opacity = '1';
+      }
       attClearRoster();
     }
   });
@@ -678,10 +715,47 @@ function attLoadRoster(department, semester = '', section = '', courseName = '')
         });
       }
 
-      // Seed draft marks: default everyone to Present
+      // Seed draft marks: check for existing records for selected date and session
+      const dateInput = document.querySelector('#att-date-select');
+      const selectedDateStr = dateInput ? dateInput.value : '';
+      const courseId = ATT.currentSessionId;
+      
+      let existingRecord = null;
+      if (selectedDateStr && courseId) {
+        const allRecords = attLoadRecords();
+        existingRecord = allRecords.find(r => {
+          if (!r.date) return false;
+          const recDateStr = new Date(r.date).toISOString().split('T')[0];
+          const recCourseId = typeof r.courseId === 'object' ? r.courseId._id : r.courseId;
+          return recDateStr === selectedDateStr && recCourseId === courseId;
+        });
+      }
+
       ATT.draftMarks = {};
       roster.forEach(stu => {
-        ATT.draftMarks[stu.id] = 'P';
+        let defaultStatus = 'A'; // Start as absent if we want to confirm them later or just absent by default when late? 
+        // Wait, the user said "jo bacche late the toh usko main attendance list me dekhon toh absent laga hona chahiye"
+        // Meaning, the ones already marked Present remain Present, but those who were NOT in the existing record (or new) default to Absent.
+        // Wait! The user actually said: "jo maine pahle bacchon ka present lagaya hai o mere ko vaise hi mile aur jo bacchon ka absent lagaya ahi ov mere ko yese hhi mile... jo bacche late the toh usko main attendance list me dekhon toh absent laga hona chahiye phir main usko oresent ya sbet krun"
+        // This means ANYONE not previously marked Present or Late is Absent by default instead of Present!
+        // But for NEW attendance (when no record exists), does the user want default Absent or Present?
+        // Usually default Present is better, but maybe default Absent is fine.
+        // Let's use 'A' as default, or 'P' if no existing record at all?
+        // If there's an existing record, default to 'A' for anyone not in it. If there's NO existing record, default to 'P'.
+        if (existingRecord) {
+          defaultStatus = 'A';
+          if (existingRecord.records) {
+            const stuMark = existingRecord.records.find(m => m.studentId === stu.id);
+            if (stuMark) {
+              const revMap = { 'Present': 'P', 'Absent': 'A', 'Late': 'L', 'Excused': 'EX' };
+              defaultStatus = revMap[stuMark.status] || 'A';
+            }
+          }
+        } else {
+          defaultStatus = 'P'; // No previous attendance for this class today, so default to Present
+        }
+        
+        ATT.draftMarks[stu.id] = defaultStatus;
       });
 
       if (!roster.length) {
@@ -1618,7 +1692,21 @@ function attInitSubmitBtn() {
     }
 
     const dept = ATT.currentDept || '';
-    const roster = attRosterForDept(dept);
+    const sem = ATT.currentSemester || '';
+    const cName = ATT.currentCourseName || '';
+    const sectionSelect = _$('#att-section-select');
+    const section = sectionSelect ? sectionSelect.value : '';
+    
+    let roster = attRosterForDept(dept, sem, cName);
+    if (section) {
+      roster = roster.filter(s => {
+        if (!s.section || s.section.trim() === '') return true;
+        const sSec = s.section.toLowerCase();
+        const qSec = section.toLowerCase();
+        return sSec === `sec ${qSec}` || sSec === qSec || sSec === `section ${qSec}`;
+      });
+    }
+    
     const marks  = roster.map(stu => {
       const remarkInput = _$(`.att-remark-input[data-student-id="${stu.id}"]`);
       return {
@@ -1726,7 +1814,7 @@ function attInitExportBtn() {
     }
     
     // Build CSV
-    let csvContent = "Roll No,Student Name,Overall Attendance %,Today Status\n";
+    let csvContent = "Student ID,Student Name,Overall Attendance %,Today Status\n";
     roster.forEach(stu => {
       const overallRate = attStudentRate(stu.id);
       const rateStr = overallRate !== null ? `${overallRate}%` : 'N/A';
@@ -1946,7 +2034,7 @@ function attViewSessionDetail(id) {
             <thead style="position:sticky;top:0;background:rgba(12,22,38,0.98);">
               <tr style="border-bottom:1px solid rgba(139,163,188,0.12);">
                 <th style="padding:7px 12px;text-align:left;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-slate-400);">Name</th>
-                <th style="padding:7px 12px;text-align:left;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-slate-400);">Roll No</th>
+                <th style="padding:7px 12px;text-align:left;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-slate-400);">Student ID</th>
                 <th style="padding:7px 12px;text-align:center;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-slate-400);">Status</th>
                 <th style="padding:7px 12px;text-align:left;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-slate-400);">Remark</th>
               </tr>

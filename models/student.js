@@ -45,6 +45,11 @@ const studentSchema = new mongoose.Schema(
       trim: true,
     },
 
+    batch: {
+      type: String,
+      trim: true,
+    },
+
     semester: {
       type: String,
       trim: true,

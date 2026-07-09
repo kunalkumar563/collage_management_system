@@ -1574,7 +1574,24 @@
         </div>
       </section>
       </div>
+      <!-- ── STUDENT REGISTRATION ─────────────────────── -->
+      <section id="registration-section" aria-labelledby="registration-title" data-roles="student" style="display:none;">
+        <div style="background:var(--color-surface); border:1px solid var(--color-border); border-radius:var(--radius-lg); padding:32px; display:flex; flex-direction:column; gap:24px; position:relative; overflow:hidden;">
+          <h2 id="registration-title" style="font-size:24px; color:var(--color-white); font-family:var(--font-display); font-weight:700;">Student Registration</h2>
+          
+          <div id="registration-already-submitted" style="display:none; text-align:center; padding:40px 20px; background:rgba(16,185,129,0.05); border:1px solid var(--color-success); border-radius:var(--radius-md);">
+            <div style="width:64px; height:64px; border-radius:50%; background:var(--color-success); color:var(--color-white); display:flex; align-items:center; justify-content:center; font-size:32px; margin:0 auto 16px;">
+              <i class="fas fa-check"></i>
+            </div>
+            <h3 style="color:var(--color-success); font-size:20px; margin-bottom:8px;">Registration Already Submitted</h3>
+            <p style="color:var(--color-slate-400); font-size:15px; max-width:400px; margin:0 auto;">Your registration has been successfully processed and your admission status is active. No further action is required.</p>
+          </div>
 
+          <div id="registration-form-container" style="display:none;">
+            <!-- Form will be injected here by script.js -->
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- Footer Bar -->

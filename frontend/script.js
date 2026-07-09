@@ -1105,6 +1105,10 @@ const NavModule = (() => {
     if (sectionKey === 'students') {
       StudentModule.fetchAndRender();
     }
+    
+    if (sectionKey === 'registration') {
+      loadStudentRegistrationForm();
+    }
   }
 
   /* ── 07b. Breadcrumb update ─────────────────────────────────────────── */
@@ -1582,7 +1586,19 @@ const StudentModule = (() => {
         </div>
 
         <div style="${fieldWrap}">
-          <label for="sf-rollno" style="${labelStyle}">Roll Number</label>
+          <label for="sf-batch" style="${labelStyle}">Batch *</label>
+          <select id="sf-batch" name="batch" required style="${inputStyle}cursor:pointer;">
+            <option value="" disabled ${!v.batch ? 'selected' : ''}>Select batch</option>
+            ${['2021-2025','2022-2026','2023-2027','2024-2028','2025-2029'].map(b =>
+              `<option value="${b}" ${(v.batch || '') === b ? 'selected' : ''}>${b}</option>`
+            ).join('')}
+          </select>
+          <div class="field-error" style="color:var(--color-danger,#F25F5C);font-size:11px;margin-top:4px;display:none;"></div>
+        </div>
+
+
+        <div style="${fieldWrap}">
+          <label for="sf-rollno" style="${labelStyle}">Student ID</label>
           <input id="sf-rollno" name="rollNo" type="text"
             placeholder="Leave blank to auto-generate"
             value="${v.rollNo || ''}"
@@ -1678,6 +1694,7 @@ const StudentModule = (() => {
     const name   = form.querySelector('#sf-name');
     const email  = form.querySelector('#sf-email');
     const dept   = form.querySelector('#sf-dept');
+    const batch  = form.querySelector('#sf-batch');
     const rollNo = form.querySelector('#sf-rollno');
     const course = form.querySelector('#sf-course');
 
@@ -1694,8 +1711,12 @@ const StudentModule = (() => {
       errors.department = 'Please select a department';
     }
 
+    if (!batch.value) {
+      errors.batch = 'Please select a batch';
+    }
+
     if (rollNo.value.trim() && rollNo.value.trim().length < 4) {
-      errors.rollNo = 'Roll number must be at least 4 characters or leave blank';
+      errors.rollNo = 'Student ID must be at least 4 characters or leave blank';
     }
 
     if (!course.value.trim() || course.value.trim().length < 2) {
@@ -1713,6 +1734,7 @@ const StudentModule = (() => {
       'sf-name': 'name',
       'sf-email': 'email',
       'sf-dept': 'department',
+      'sf-batch': 'batch',
       'sf-rollno': 'rollNo',
       'sf-course': 'course',
     };
@@ -1740,6 +1762,7 @@ const StudentModule = (() => {
       phone:      form.querySelector('#sf-phone').value,
       dob:        form.querySelector('#sf-dob').value,
       department: form.querySelector('#sf-dept').value,
+      batch:      form.querySelector('#sf-batch').value,
       course:     form.querySelector('#sf-course').value,
       semester:   form.querySelector('#sf-semester').value,
       section:    form.querySelector('#sf-section').value,
@@ -2222,8 +2245,9 @@ const StudentModule = (() => {
                 <tr>
                   <th scope="col">Student</th>
                   <th scope="col">Admission No</th>
-                  <th scope="col">Roll No</th>
+                  <th scope="col">Student ID</th>
                   <th scope="col">Department</th>
+                  <th scope="col">Batch</th>
                   <th scope="col">Course</th>
                   <th scope="col">Sem</th>
                   <th scope="col">Section</th>
@@ -2414,6 +2438,7 @@ const StudentModule = (() => {
         <td><span class="table-id">${escHTML(s.admissionNo)}</span></td>
         <td><span class="table-id">${escHTML(s.rollNo)}</span></td>
         <td>${escHTML(s.department)}</td>
+        <td><span class="badge badge--info">${escHTML(s.batch || '—')}</span></td>
         <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHTML(s.course)}">${escHTML(s.course)}</td>
         <td style="text-align:center;">${escHTML(s.semester)}</td>
         <td style="text-align:center;color:var(--color-slate-400,#8BA3BC);font-size:12px;">${escHTML(s.section || '—')}</td>
@@ -2552,14 +2577,14 @@ const StudentModule = (() => {
     }
 
     const headers = [
-      'Admission No', 'Roll No', 'Full Name', 'Email', 'Phone',
-      'Date of Birth', 'Gender', 'Department', 'Course', 'Semester',
+      'Admission No', 'Student ID', 'Full Name', 'Email', 'Phone',
+      'Date of Birth', 'Gender', 'Department', 'Batch', 'Course', 'Semester',
       'Address', 'Status', 'Fees Paid', 'Enrolled On',
     ];
 
     const rows = students.map(s => [
       s.admissionNo, s.rollNo, s.name, s.email, s.phone,
-      s.dob, s.gender, s.department, s.course, s.semester,
+      s.dob, s.gender, s.department, s.batch, s.course, s.semester,
       `"${(s.address || '').replace(/"/g, '""')}"`,
       s.status, s.feesPaid ? 'Yes' : 'No',
       formatDate(new Date(s.createdAt)),
@@ -2966,6 +2991,119 @@ function _scriptEscHTML(str = '') {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+async function loadStudentRegistrationForm() {
+  const role = Auth.getRole();
+  if (role !== 'student') return;
+
+  try {
+    const res = await Auth.fetch('/student/dashboard');
+    if (!res.ok) return;
+    const body = await res.json();
+    if (body.success && body.data && body.data.student) {
+      const student = body.data.student;
+      
+      const alreadySubmittedEl = document.getElementById('registration-already-submitted');
+      const formContainer = document.getElementById('registration-form-container');
+      
+      // Check if student has submitted registration
+      if (student.status === 'Enrolled' || student.status === 'Active' || student.department && student.course && student.batch) {
+        alreadySubmittedEl.style.display = 'block';
+        formContainer.style.display = 'none';
+      } else {
+        alreadySubmittedEl.style.display = 'none';
+        formContainer.style.display = 'block';
+        
+        // Render form using StudentModule's HTML generator (but we need it exposed, or we can just build a subset here)
+        // Since buildFormHTML is private to StudentModule, let's just make a simple form for self-registration
+        formContainer.innerHTML = `
+          <form id="student-self-reg-form" novalidate autocomplete="off">
+            <div style="margin-bottom: 24px; padding: 12px 16px; background: rgba(0, 212, 255, 0.05); border-left: 3px solid var(--color-cyan-400); border-radius: 4px;">
+              <label style="display:block; font-size: 12px; font-weight: 600; color: var(--color-slate-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Important: Your Student ID</label>
+              <div style="font-size: 16px; font-weight: 700; color: var(--color-cyan-300); font-family: var(--font-mono); letter-spacing: 1px;">
+                ${student.rollNo || student.admissionNo || 'N/A'}
+              </div>
+              <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--color-slate-500);">This ID will be permanently recorded with your registration data.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Department *</label>
+                <select name="department" required style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);">
+                  <option value="" disabled selected>Select department</option>
+                  ${['Computer Science','Business Admin','Engineering','Medical Sciences','Arts & Humanities'].map(d => '<option value="' + d + '" ' + (student.department===d?'selected':'') + '>' + d + '</option>').join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Batch *</label>
+                <select name="batch" required style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);">
+                  <option value="" disabled selected>Select batch</option>
+                  ${['2021-2025','2022-2026','2023-2027','2024-2028','2025-2029'].map(b => '<option value="' + b + '" ' + (student.batch===b?'selected':'') + '>' + b + '</option>').join('')}
+                </select>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Course / Programme *</label>
+                <input name="course" type="text" required placeholder="e.g. B.Sc. Computer Science" value="${student.course||''}" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);"/>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Semester</label>
+                <select name="semester" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);">
+                  ${[1,2,3,4,5,6,7,8].map(n => '<option value="' + n + '" ' + (student.semester==n?'selected':'') + '>Semester ' + n + '</option>').join('')}
+                </select>
+              </div>
+              <div style="grid-column:1/-1;">
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Address</label>
+                <textarea name="address" rows="2" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);resize:vertical;">${student.address||''}</textarea>
+              </div>
+            </div>
+            <div style="margin-top:24px;text-align:right;">
+              <button type="submit" style="padding:10px 24px; border-radius:6px; background:var(--color-cyan-400); color:#fff; border:none; font-weight:700; cursor:pointer;">Submit Registration</button>
+            </div>
+          </form>
+        `;
+
+        const form = document.getElementById('student-self-reg-form');
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const btn = form.querySelector('button[type="submit"]');
+          btn.disabled = true;
+          btn.textContent = 'Submitting...';
+          
+          const payload = {
+            department: form.department.value,
+            batch: form.batch.value,
+            course: form.course.value,
+            semester: form.semester.value,
+            address: form.address.value,
+            status: 'Enrolled'
+          };
+          
+          try {
+            const upRes = await Auth.fetch(`/students/${student._id}`, {
+              method: 'PUT',
+              body: JSON.stringify(payload)
+            });
+            if (upRes.ok) {
+              Toast.show('Registration submitted successfully!', 'success');
+              loadStudentRegistrationForm(); // reload to show success
+            } else {
+              const errBody = await upRes.json();
+              console.error('Registration submit error:', errBody);
+              Toast.show(`Failed: ${errBody.message || 'Unknown Error'}`, 'danger');
+              btn.disabled = false;
+              btn.textContent = 'Submit Registration';
+            }
+          } catch(err) {
+            Toast.show('Network error.', 'danger');
+            btn.disabled = false;
+            btn.textContent = 'Submit Registration';
+          }
+        });
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function fetchDashboardStats() {

@@ -17,6 +17,10 @@ const courseSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    batch: {
+      type: String,
+      trim: true,
+    },
     semester: {
       type: String,
       required: true,
@@ -44,6 +48,8 @@ const courseSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
   }
 );
 
