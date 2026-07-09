@@ -269,16 +269,16 @@ const SECTION_HTML = `
 <!-- ATTENDANCE SECTION -->
 <section id="attendance-section" aria-labelledby="attendance-section-title" data-module="attendance" style="display:none;">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
-    <h2 class="section-title" id="attendance-section-title" style="margin-bottom:0; border:none; padding:0;">Take Attendance</h2>
-    <div style="display: flex; gap: 16px;">
-      <button id="btn-att-roster-export" class="card-action-btn" style="width:auto; padding:0 12px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:1px solid var(--color-border-bright); border-radius:var(--radius-sm); color:var(--color-slate-300); background:transparent; display:flex; align-items:center; gap:6px;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:16px; margin-bottom:24px;">
+    <h2 class="section-title" id="attendance-section-title" style="margin-bottom:0; border:none; padding:0; flex-shrink:0;">Take Attendance</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; flex: 1; justify-content: flex-end;">
+      <button id="btn-att-roster-export" class="card-action-btn" style="width:auto; padding:8px 12px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:1px solid var(--color-border-bright); border-radius:var(--radius-sm); color:var(--color-slate-300); background:transparent; display:flex; align-items:center; gap:6px;">
         <i class="fas fa-file-csv"></i> Download CSV
       </button>
-      <button id="att-check-all-btn" class="card-action-btn" style="width:auto; padding:0 12px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:1px solid var(--color-cyan-400); border-radius:var(--radius-sm); color:var(--color-cyan-400); background:transparent; display:flex; align-items:center; gap:6px;">
+      <button id="att-check-all-btn" class="card-action-btn" style="width:auto; padding:8px 12px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:1px solid var(--color-cyan-400); border-radius:var(--radius-sm); color:var(--color-cyan-400); background:transparent; display:flex; align-items:center; gap:6px;">
         <i class="fas fa-check"></i> Mark All Present
       </button>
-      <button id="btn-att-submit" style="width:auto; padding:0 16px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:none; border-radius:var(--radius-sm); color:#fff; background:var(--color-cyan-400); display:flex; align-items:center; gap:6px; cursor:pointer; transition:all 0.2s;" onmouseover="if(!this.disabled){this.style.opacity='0.85'; this.style.boxShadow='var(--shadow-glow)';}" onmouseout="if(!this.disabled){this.style.opacity='1'; this.style.boxShadow='none';}">
+      <button id="btn-att-submit" style="width:auto; padding:8px 16px; font-family:var(--font-ui); font-size:12px; font-weight:600; border:none; border-radius:var(--radius-sm); color:#fff; background:var(--color-cyan-400); display:flex; align-items:center; gap:6px; cursor:pointer; transition:all 0.2s;" onmouseover="if(!this.disabled){this.style.opacity='0.85'; this.style.boxShadow='var(--shadow-glow)';}" onmouseout="if(!this.disabled){this.style.opacity='1'; this.style.boxShadow='none';}">
         <i class="fas fa-lock"></i> Submit Attendance
       </button>
     </div>
@@ -286,18 +286,18 @@ const SECTION_HTML = `
 
   <!-- Filters Row -->
   <div class="card" style="margin-bottom: 24px;">
-    <div class="card-body" style="padding: 16px; display:flex; gap: 16px;">
-      <select id="att-session-select" style="flex:2; height: 38px; padding: 0 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-white); background: var(--color-surface); outline: none; appearance: none; -webkit-appearance: none;">
+    <div class="card-body" style="padding: 16px; display:flex; flex-wrap:wrap; gap: 16px;">
+      <select id="att-session-select" style="flex:1 1 200px; height: 38px; padding: 0 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-white); background: var(--color-surface); outline: none; appearance: none; -webkit-appearance: none;">
         <option value="">— Choose Course / Session —</option>
       </select>
-      <select id="att-section-select" style="flex:1; height: 38px; padding: 0 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-white); background: var(--color-surface); outline: none; appearance: none; -webkit-appearance: none;">
+      <select id="att-section-select" style="flex:1 1 120px; height: 38px; padding: 0 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-white); background: var(--color-surface); outline: none; appearance: none; -webkit-appearance: none;">
         <option value="">— Section (All) —</option>
         <option value="A">Section A</option>
         <option value="B">Section B</option>
         <option value="C">Section C</option>
         <option value="D">Section D</option>
       </select>
-      <div style="flex:1;">
+      <div style="flex:1 1 140px;">
         <input type="date" id="att-date-select" style="width: 100%; height: 38px; padding: 0 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-white); background: var(--color-surface); outline: none; color-scheme: dark;">
       </div>
     </div>

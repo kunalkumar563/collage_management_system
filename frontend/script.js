@@ -862,12 +862,12 @@ const NavModule = (() => {
           
           section.innerHTML = `
             <h2 class="section-title">My Profile</h2>
-            <div class="card" style="max-width:600px; margin:0 auto; padding:40px; text-align:center; position:relative;">
+            <div class="card" style="max-width:600px; margin:0 auto; padding: 24px; text-align:center; position:relative;">
               <div style="position:relative; width:120px; height:120px; margin:0 auto 24px;">
                 <div id="profile-avatar-display" style="width:120px; height:120px; border-radius:50%; background:linear-gradient(135deg,var(--color-cyan-600),var(--color-blue-700)); color:#fff; font-size:48px; font-weight:700; display:flex; align-items:center; justify-content:center; overflow:hidden;">
                   ${profImg}
                 </div>
-                <label for="profile-pic-upload" style="position:absolute; bottom:0; right:0; width:36px; height:36px; background:#C8102E; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+                <label for="profile-pic-upload" style="position:absolute; bottom:0; right:0; width:36px; height:36px; background:#C8102E; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; border:3px solid var(--color-surface); box-shadow:0 2px 4px rgba(0,0,0,0.1);">
                   <i class="fas fa-camera"></i>
                 </label>
                 <input type="file" id="profile-pic-upload" accept="image/*" style="display:none;" onchange="uploadProfilePicture(event)">
@@ -875,7 +875,7 @@ const NavModule = (() => {
               <h3 style="font-size:28px; margin-bottom:8px; color:var(--color-white);">${user.name}</h3>
               <div style="color:var(--color-slate-400); font-size:16px; margin-bottom:24px;">${user.email}</div>
               
-              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; text-align:left; background:rgba(0,0,0,0.2); padding:24px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; text-align:left; background:var(--color-navy-800); padding:24px; border-radius:12px; border:1px solid var(--color-border);">
                 <div>
                   <div style="font-size:12px; color:var(--color-slate-400); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.05em;">Role</div>
                   <div style="font-size:16px; font-weight:600; color:var(--color-white); text-transform:capitalize;">${user.role}</div>
@@ -3019,14 +3019,28 @@ async function loadStudentRegistrationForm() {
         // Since buildFormHTML is private to StudentModule, let's just make a simple form for self-registration
         formContainer.innerHTML = `
           <form id="student-self-reg-form" novalidate autocomplete="off">
-            <div style="margin-bottom: 24px; padding: 12px 16px; background: rgba(0, 212, 255, 0.05); border-left: 3px solid var(--color-cyan-400); border-radius: 4px;">
-              <label style="display:block; font-size: 12px; font-weight: 600; color: var(--color-slate-400); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">Important: Your Student ID</label>
-              <div style="font-size: 16px; font-weight: 700; color: var(--color-cyan-300); font-family: var(--font-mono); letter-spacing: 1px;">
-                ${student.rollNo || student.admissionNo || 'N/A'}
-              </div>
-              <p style="margin: 4px 0 0 0; font-size: 11px; color: var(--color-slate-500);">This ID will be permanently recorded with your registration data.</p>
-            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+              <div style="grid-column:1/-1;">
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-cyan-400);">Student ID *</label>
+                <input id="reg-student-id" name="studentId" type="text" required placeholder="Enter your official college Student ID" value="${student.rollNo || student.admissionNo || ''}" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-cyan-500);border-radius:6px;color:var(--color-white);font-weight:700;font-family:var(--font-mono);"/>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Phone Number *</label>
+                <input name="phone" type="tel" required placeholder="Enter 10-digit mobile" value="${student.phone||''}" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);"/>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Date of Birth *</label>
+                <input name="dob" type="date" required value="${student.dob ? student.dob.split('T')[0] : ''}" style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white); color-scheme: dark;"/>
+              </div>
+              <div>
+                <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Gender *</label>
+                <select name="gender" required style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);">
+                  <option value="" disabled selected>Select Gender</option>
+                  <option value="Male" ${student.gender==='Male'?'selected':''}>Male</option>
+                  <option value="Female" ${student.gender==='Female'?'selected':''}>Female</option>
+                  <option value="Other" ${student.gender==='Other'?'selected':''}>Other</option>
+                </select>
+              </div>
               <div>
                 <label style="display:block;margin-bottom:6px;font-size:13px;font-weight:600;color:var(--color-slate-400);">Department *</label>
                 <select name="department" required style="width:100%;padding:10px 14px;background:var(--color-navy-800);border:1px solid var(--color-border);border-radius:6px;color:var(--color-white);">
@@ -3065,14 +3079,32 @@ async function loadStudentRegistrationForm() {
         const form = document.getElementById('student-self-reg-form');
         form.addEventListener('submit', async (e) => {
           e.preventDefault();
+          
+          const rollNo = form.studentId.value.trim();
+          const phone = form.phone.value.trim();
+          const dob = form.dob.value;
+          const gender = form.gender.value;
+          const department = form.department.value;
+          const batch = form.batch.value;
+          const course = form.course.value.trim();
+          
+          if (!rollNo || !phone || !dob || !gender || !department || !batch || !course) {
+            Toast.show('Please fill all compulsory fields marked with *', 'danger');
+            return;
+          }
+
           const btn = form.querySelector('button[type="submit"]');
           btn.disabled = true;
           btn.textContent = 'Submitting...';
           
           const payload = {
-            department: form.department.value,
-            batch: form.batch.value,
-            course: form.course.value,
+            rollNo,
+            phone,
+            dob,
+            gender,
+            department,
+            batch,
+            course,
             semester: form.semester.value,
             address: form.address.value,
             status: 'Enrolled'
