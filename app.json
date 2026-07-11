@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "46d133fc-73b8-41aa-a6f8-3f47d66c111d"
+      }
+    },
+    "android": {
+      "package": "com.kunalkumar563.collage_result_system"
+    }
+  }
+}
